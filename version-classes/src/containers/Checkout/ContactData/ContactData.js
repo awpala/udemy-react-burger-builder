@@ -68,13 +68,19 @@ class ContactData extends Component {
         event.preventDefault();
 
         const { ingredients, price } = this.props;
+        const { orderForm } = this.state;
 
         this.setState({ loading: true });
+
+        const formData = {};
+        for (let formElementIdentifier in orderForm) {
+            formData[formElementIdentifier] = orderForm[formElementIdentifier].value;
+        }
 
         const order = {
             ingredients,
             price,
-
+            orderData: formData,
         }
         axios.post('/orders.json', order) // N.B. .json extension is used for Firebase (rather than the generic route /orders)
         .then(response => {
@@ -122,9 +128,9 @@ class ContactData extends Component {
         let form = this.state.loading
             ? <Spinner />
             : (
-                <form>
+                <form onSubmit={this.orderHandler}>
                     {mappedFormElements}
-                    <Button btnType="Success" clicked={this.orderHandler}>ORDER</Button>
+                    <Button btnType="Success">ORDER</Button>
                 </form>
             );
 
