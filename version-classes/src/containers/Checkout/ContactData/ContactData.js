@@ -8,11 +8,58 @@ import Input from '../../../components/UI/Input/Input';
 
 class ContactData extends Component {
     state = {
-        name: '',
-        email: '',
-        address: {
-            street: '',
-            postalCode: '',
+        orderForm: {
+            name: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Your Name'
+                },
+                value: ''
+            },
+            street: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Street'
+                },
+                value: ''
+            },
+            zipCode: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'ZIP Code'
+                },
+                value: ''
+            },
+            country: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Country'
+                },
+                value: ''
+            },
+            email: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'email',
+                    placeholder: 'Your Email'
+                },
+                value: ''
+            },
+            deliveryMethod: {
+                elementType: 'select',
+                elementConfig: {
+                    options: [
+                        { value: 'rush', displayValue: 'Rush'},
+                        { value: 'standard', displayValue: 'Standard'},
+                        { value: 'economy', displayValue: 'Economy'},
+                    ]
+                },
+                value: ''
+            },
         },
         loading: false,
     }
@@ -27,16 +74,7 @@ class ContactData extends Component {
         const order = {
             ingredients,
             price,
-            customer: {
-                name: 'Max',
-                address: {
-                    street: '123 Fake St',
-                    zipCode: '12345',
-                    country: 'US'
-                },
-                email: 'test@test.com'
-            },
-            deliveryMethod: 'rush'
+
         }
         axios.post('/orders.json', order) // N.B. .json extension is used for Firebase (rather than the generic route /orders)
         .then(response => {
@@ -50,15 +88,42 @@ class ContactData extends Component {
         });
     }
 
+    inputChangedHandler = (event, inputIdentifier) => {
+        const updatedOrderForm = { ...this.state.orderForm };
+        const updatedFormElement = { ...updatedOrderForm[inputIdentifier]}
+        updatedFormElement.value = event.target.value;
+        updatedOrderForm[inputIdentifier] = updatedFormElement;
+        this.setState({ orderForm: updatedOrderForm });
+    }
+
     render() {
+        const formElementsArray = [];
+        for (let key in this.state.orderForm) {
+            formElementsArray.push({
+                id: key,
+                config: this.state.orderForm[key],
+            });
+        }
+
+        const mappedFormElements = formElementsArray.map(formElement => {
+            const { config: { elementType, elementConfig, value }, id } = formElement;
+
+            return (
+                <Input
+                    key={id}
+                    elementType={elementType}
+                    elementConfig={elementConfig}
+                    value={value}
+                    changed={(event) => this.inputChangedHandler(event, id)}
+                />
+            );
+        });
+
         let form = this.state.loading
             ? <Spinner />
             : (
                 <form>
-                    <Input inputtype="input" type="text" name="name" placeholder="Your Name" />
-                    <Input inputtype="input" type="email" name="email" placeholder="Your Email" />
-                    <Input inputtype="input" type="text" name="street" placeholder="Street" />
-                    <Input inputtype="input" type="text" name="postal" placeholder="Postal Code" />
+                    {mappedFormElements}
                     <Button btnType="Success" clicked={this.orderHandler}>ORDER</Button>
                 </form>
             );

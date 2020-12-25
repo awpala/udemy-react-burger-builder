@@ -2,18 +2,57 @@ import React from 'react';
 
 import classes from './Input.css';
 
-const input = ({ ...props, inputtype, label }) => {
+const input = ({ elementType, elementConfig, value, changed, label }) => {
     let inputElement = null;
 
-    switch(inputtype) {
+    switch(elementType) {
         case('input'):
-            inputElement = <input className={classes.InputElement} {...props} />
+            inputElement = (
+                <input
+                    className={classes.InputElement}
+                    value={value}
+                    onChange={changed}
+                    {...elementConfig}
+                />
+            );
             break;
         case('textarea'):
-            inputElement = <textarea className={classes.InputElement} {...props} />
+            inputElement = (
+                <textarea
+                    className={classes.InputElement}
+                    value={value}
+                    onChange={changed}
+                    {...elementConfig}
+                />
+            );
+            break;
+        case('select'):
+            inputElement = (
+                <select
+                    className={classes.InputElement}
+                    value={value}
+                    onChange={changed}
+                >
+                    {elementConfig.options.map(option => (
+                        <option
+                            key={option.value}
+                            value={option.value}
+                        >
+                            {option.displayValue}
+                        </option>
+                    ))}
+                </select>
+            );
             break;
         default:
-            inputElement = <input className={classes.InputElement} {...props} />;
+            inputElement = (
+                <input
+                    className={classes.InputElement}
+                    value={value}
+                    onChange={changed}
+                    {...elementConfig}
+                />
+            );
     }
 
     return (
