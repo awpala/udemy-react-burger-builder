@@ -48,22 +48,7 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
-        // // alert('You continue!');
-
-        const { ingredients } = this.state;
-        const { price } = this.props; // from Redux store
-
-        const queryParams=[];
-        for (let ingredient in ingredients) {
-            queryParams.push(`${encodeURIComponent(ingredient)}=${encodeURIComponent(ingredients[ingredient])}`);
-        }
-        queryParams.push('price=' + price);
-        const queryString = queryParams.join('&');
-
-        this.props.history.push({
-            pathname: '/checkout',
-            search: '?' + queryString,
-        });
+        this.props.history.push('/checkout');
     }
 
     render() {

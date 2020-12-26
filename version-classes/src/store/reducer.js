@@ -38,7 +38,7 @@ const reducer = (state = initialState, action) => {
                     },
                     totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientName],
                 }
-                : { ...state }; // guard condition if action.ingredientName is already 0
+                : { ...state }; // guard condition if state.ingredients[action.ingredientName] is already 0
         default:
             return state;
     }
