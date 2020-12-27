@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
 import classes from './Auth.css';
+import * as actions from '../../store/actions/';
 
 class Auth extends Component {
     state = {
@@ -37,6 +39,7 @@ class Auth extends Component {
             },
         },
         formIsValid: false,
+        isSignUp: true,
     }
 
     checkValidity = (value, rules) => {
@@ -85,6 +88,20 @@ class Auth extends Component {
         this.setState({ formData: updatedFormData });
     }
 
+    submitHandler = (event) => {
+        event.preventDefault();
+        const { formData: { email, password }, isSignUp } = this.state;
+        this.props.onAuth(email.value, password.value, isSignUp); // from Redux
+    }
+
+    switchAuthModeHandler = () => {
+        this.setState(prevState => {
+            return {
+                isSignUp: !prevState.isSignUp
+            };
+        });
+    }
+
     render() {
         const formElementsArray = [];
         for (let key in this.state.formData) {
@@ -110,16 +127,30 @@ class Auth extends Component {
                 />
             );
         });
+
+        const { isSignUp } = this.state;
         
         return (
             <div className={classes.Auth}>
-                <form>
+                <form onSubmit={this.submitHandler}>
                     {mappedFormElements}
                     <Button btnType="Success">SUBMIT</Button>
                 </form>
+                <Button
+                    clicked={this.switchAuthModeHandler}
+                    btnType="Danger"
+                >
+                    SWITCH TO {isSignUp ? 'SIGN-IN' : 'SIGN-UP'}
+                </Button>
             </div>
         )
     }
 }
 
-export default Auth;
+const mapDispatchToProps = dispatch => {
+    return {
+        onAuth: (email, password, isSignUp) => dispatch(actions.auth(email, password, isSignUp)),
+    };
+}
+
+export default connect(null, mapDispatchToProps)(Auth);
