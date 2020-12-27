@@ -5,5 +5,5 @@ export {
 } from './burgerBuilder';
 
 export {
-    // TO-DO
+    purchaseBurger,
 } from './order';
