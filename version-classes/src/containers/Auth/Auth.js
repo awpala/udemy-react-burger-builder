@@ -38,7 +38,6 @@ class Auth extends Component {
                 touched: false,
             },
         },
-        formIsValid: false,
         isSignUp: true,
     }
 
