@@ -15,11 +15,14 @@ class Checkout extends Component {
     }
 
     render() {
-        const { ings } = this.props; // from Redux store
+        const { ings, purchased } = this.props; // from Redux store
+
+        const purchasedRedirect = purchased ? <Redirect to="/" /> : null;
 
         const summary = ings
             ? (
                 <div>
+                    {purchasedRedirect}
                     <CheckoutSummary
                         ingredients={ings}
                         checkoutCancelled={this.checkoutCancelledHandler}
@@ -30,7 +33,6 @@ class Checkout extends Component {
                         component={ContactData}
                     />
                 </div>
-
             )
             : (<Redirect to="/" />);
 
@@ -41,6 +43,7 @@ class Checkout extends Component {
 const mapStateToProps = state => {
     return {
         ings: state.burgerBuilder.ingredients,
+        purchased: state.order.purchased,
     };
 }
 
