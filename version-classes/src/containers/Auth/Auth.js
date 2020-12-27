@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
+import Spinner from '../../components/UI/Spinner/Spinner';
 import classes from './Auth.css';
 import * as actions from '../../store/actions/';
 
@@ -102,6 +103,9 @@ class Auth extends Component {
     }
 
     render() {
+        const { isSignUp } = this.state;
+        const { loading, error } = this.props; // from Redux store
+        
         const formElementsArray = [];
         for (let key in this.state.formData) {
             formElementsArray.push({
@@ -110,29 +114,34 @@ class Auth extends Component {
             });
         }
 
-        const mappedFormElements = formElementsArray.map(formElement => {
-            const { config: { elementType, elementConfig, value, validation, valid, touched }, id } = formElement;
-
-            return (
-                <Input
-                    key={id}
-                    elementType={elementType}
-                    elementConfig={elementConfig}
-                    value={value}
-                    invalid={!valid}
-                    shouldValidate={validation}
-                    touched={touched}
-                    changed={(event) => this.inputChangedHandler(event, id)}
-                />
+        const form = loading
+            ? (<Spinner />)
+            : (
+                formElementsArray.map(formElement => {
+                    const { config: { elementType, elementConfig, value, validation, valid, touched }, id } = formElement;
+        
+                    return (
+                        <Input
+                            key={id}
+                            elementType={elementType}
+                            elementConfig={elementConfig}
+                            value={value}
+                            invalid={!valid}
+                            shouldValidate={validation}
+                            touched={touched}
+                            changed={(event) => this.inputChangedHandler(event, id)}
+                        />
+                    );
+                })
             );
-        });
 
-        const { isSignUp } = this.state;
+        const errorMessage = error ? (<p>{error.message}</p>) : null;
         
         return (
             <div className={classes.Auth}>
+                {errorMessage}
                 <form onSubmit={this.submitHandler}>
-                    {mappedFormElements}
+                    {form}
                     <Button btnType="Success">SUBMIT</Button>
                 </form>
                 <Button
@@ -146,10 +155,17 @@ class Auth extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        loading: state.auth.loading,
+        error: state.auth.error,
+    };
+}
+
 const mapDispatchToProps = dispatch => {
     return {
         onAuth: (email, password, isSignUp) => dispatch(actions.auth(email, password, isSignUp)),
     };
 }
 
-export default connect(null, mapDispatchToProps)(Auth);
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);
