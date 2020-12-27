@@ -101,7 +101,7 @@ class ContactData extends Component {
     orderHandler = (event) => {
         event.preventDefault();
 
-        const { ings, price, onOrderBurger } = this.props; // from Redux store
+        const { ings, price, onOrderBurger, token } = this.props; // from Redux store
         const { orderForm } = this.state;
 
         const formData = {};
@@ -115,7 +115,7 @@ class ContactData extends Component {
             orderData: formData,
         }
 
-        onOrderBurger(order);
+        onOrderBurger(order, token);
     }
 
     checkValidity = (value, rules) => {
@@ -215,12 +215,13 @@ const mapStateToProps = state => {
         ings: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.totalPrice,
         loading: state.order.loading,
+        token: state.auth.token,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onOrderBurger: (orderData) => dispatch(actions.purchaseBurger(orderData)),
+        onOrderBurger: (orderData, token) => dispatch(actions.purchaseBurger(orderData, token)),
     };
 }
 

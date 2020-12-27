@@ -23,10 +23,10 @@ export const purchaseBurgerStart = () => {
     }
 }
 
-export const purchaseBurger = (orderData) => {
+export const purchaseBurger = (orderData, token) => {
     return (dispatch) => { // N.B. redux-thunk provides ability to perform async actions in action creators
         dispatch(purchaseBurgerStart());
-        axios.post('/orders.json', orderData) // N.B. .json extension is used for Firebase (rather than the generic route /orders)
+        axios.post('/orders.json?auth=' + token, orderData) // N.B. .json extension is used for Firebase (rather than the generic route /orders)
         .then(response => {
             dispatch(purchaseBurgerSuccess(response.data.name, orderData));
         })
@@ -62,11 +62,11 @@ export const fetchOrdersStart = () => {
     };
 };
 
-export const fetchOrders = () => {
+export const fetchOrders = (token) => {
     return (dispatch) => {
         dispatch(fetchOrdersStart());
 
-        axios.get('/orders.json')
+        axios.get('/orders.json?=auth=' + token)
             .then(res => {
                 const fetchedOrders = [];
                 for (let key in res.data) {
