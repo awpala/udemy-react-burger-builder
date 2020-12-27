@@ -25,6 +25,20 @@ export const authFail = (error) => {
     };
 };
 
+export const logout = () => {
+    return {
+        type: actionTypes.AUTH_LOGOUT
+    };
+};
+
+export const checkAuthTimeout = (expirationTime) => {
+    return dispatch => { // async via redux-thunk
+        setTimeout(() => {
+            dispatch(logout());
+        }, expirationTime * 1000); // convert ms to s
+    };
+};
+
 export const auth = (email, password, isSignUp) => {
     return dispatch => { // async via redux-thunk
         dispatch(authStart());
@@ -40,8 +54,9 @@ export const auth = (email, password, isSignUp) => {
         axios.post(url, authData)
             .then(response => {
                 // console.log(response);
-                const { idToken, localId } = response.data; // from Firebase
+                const { idToken, localId, expiresIn } = response.data; // from Firebase
                 dispatch(authSuccess(idToken, localId));
+                dispatch(checkAuthTimeout(expiresIn))
             })
             .catch(err => {
                 // console.log(err);
