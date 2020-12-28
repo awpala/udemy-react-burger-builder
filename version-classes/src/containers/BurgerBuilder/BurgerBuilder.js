@@ -52,16 +52,17 @@ class BurgerBuilder extends Component {
     }
 
     render() {
+        const { purchasing } = this.state;
+        const { ings, price, error, isAuthenticated, onIngredientAdded, onIngredientRemoved } = this.props; // from Redux store
+
         const disabledInfo = {
-            ...this.state.ingredients
+            ...ings
         }
 
         for (let key in disabledInfo) {
             disabledInfo[key] = disabledInfo[key] <= 0
         }
 
-        const { purchasing } = this.state;
-        const { ings, price, error, isAuthenticated, onIngredientAdded, onIngredientRemoved } = this.props; // from Redux store
 
         let orderSummary = !ings
             ? <Spinner/>
